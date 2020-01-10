@@ -2,7 +2,7 @@
 import React from 'react';
 import logo from './logo.svg';
 import './App.css';
-import { GoogleMap, GoogleApiWrapper, Marker, InfoWindow, Polyline, DirectionsRenderer, GoogleMapReact } from 'google-maps-react';
+import { Map, GoogleApiWrapper, Marker, InfoWindow, Polyline, DirectionsRenderer, GoogleMapReact } from 'google-maps-react';
 import CurrentLocation from './CurrentLocation';
 
 export class MapContainer extends React.Component {
@@ -60,29 +60,6 @@ export class MapContainer extends React.Component {
   }
 
   render() {
-    // bellow code isn't breaking anything and was an attempt to get the app to route betwen points
-    const apiIsLoaded = (map,maps) => {
-      const directionsService = new maps.DirectionsService();
-      const directionsDisplay = new maps.DirectionsRenderer();
-      directionsService.route({
-        origin: this.state.stores[0],
-        destination: this.state.stores[1],
-        travelMode: 'WALKING'
-      }, (response, status) => {
-        if (status === 'OK') {
-          directionsDisplay.setDirections(response);
-          console.log(response.routes[0].overview_path, 'Ruta')
-          const routePolyline = new google.maps.Polyline({
-            path: response.routes[0].overview_path
-          });
-          routePolyline.setMap(map);
-        } else {
-          window.alert('Directions request failed due to ' + status);
-        }
-      });
-    };
-    // end of code snippet
-
     return (
       <div className='App'>
       <div>
@@ -122,7 +99,7 @@ export class MapContainer extends React.Component {
         <br />
       </form>
       <div>
-        <CurrentLocation yesIWantToUseGoogleMapApiInternals centerAroundCurrentLocation google={this.props.google} onGoogleApiLoaded={({ map, maps }) => apiIsLoaded(map, maps)}>
+        <CurrentLocation yesIWantToUseGoogleMapApiInternals centerAroundCurrentLocation google={this.props.google}>
           <Marker onClick={this.onMarkerClick} name={'current location'} />
           <InfoWindow
             marker={this.state.activeMarker}
