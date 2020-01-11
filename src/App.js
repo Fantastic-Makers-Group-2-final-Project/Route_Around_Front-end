@@ -63,11 +63,11 @@ export class MapContainer extends React.Component {
     return (
       <div className='App'>
       <div>
-        <h1>Route Around App</h1>
+        <h1>Route Around</h1>
       <div>
       <form className='App' onSubmit={this.handleSubmit}>
         <label>
-          Post Code:
+          Start Location:
           <input
             name="postCode"
             type="text"
@@ -77,16 +77,15 @@ export class MapContainer extends React.Component {
         <br />
         <br />
         <label>
-          5 kilometers:
+          5K:
           <input
             name="5km"
             type="checkbox"
             checked={this.state.distance5}
             onChange={this.handleInputChange} />
         </label>
-        <br />
         <label>
-          10 kilometers:
+          10K:
           <input
             name="10km"
             type="checkbox"
