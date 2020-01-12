@@ -16,9 +16,11 @@ export class MapContainer extends React.Component {
         { lat: 51.52581606811841, lng: -0.08896274754147271 },
         { lat: 51.5178767, lng: -0.0762007 }
       ],
+      directions: [],
       showingInfoWindow: false,
       activeMarker: {},
       selectedPlace: {},
+
     }
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -48,6 +50,43 @@ export class MapContainer extends React.Component {
        lng: store.lng
      }}
      onClick={() => console.log("You clicked me!")} />
+    })
+  }
+
+  componentDidMount() {
+    var directionsService = new google.maps.DirectionsService();
+    var directionsRenderer = new google.maps.DirectionsRenderer({suppressMarkers: true});
+    var center = new google.maps.LatLng(51.5178767, -0.0762007)
+    var mapOptions = {
+      center: center,
+      zoom: 17
+    }
+    var map = new google.maps.Map(document.getElementById('map'), mapOptions);
+    directionsRenderer.setMap(map);
+
+    directionsService.route({
+      origin: new google.maps.LatLng(51.5178767, -0.0762007),
+      destination: new google.maps.LatLng(51.5178767, -0.0762007),
+      waypoints: [
+        {
+          location: new google.maps.LatLng(51.52581606811841, -0.06343865245844427)
+        },
+        {
+          location: new google.maps.LatLng(51.5337592191676, -0.07620069999995849)
+        },
+        {
+          location: new google.maps.LatLng(51.52581606811841, -0.08896274754147271)
+        }
+      ],
+      avoidHighways: true,
+      travelMode: 'WALKING',
+      region: 'gb'
+    }, function (result, status) {
+      console.log(result);
+      directionsRenderer.setDirections(result);
+      // result['routes'][0]['legs']['steps'].map(value => {
+      //   this.state.directions.push(value['start_location'])
+      // });
     })
   }
 
@@ -97,7 +136,7 @@ export class MapContainer extends React.Component {
         <input type="submit" value="GO!" />
         <br />
       </form>
-      <div>
+      <div id='map'>
         <CurrentLocation yesIWantToUseGoogleMapApiInternals centerAroundCurrentLocation google={this.props.google}>
           <Marker onClick={this.onMarkerClick} name={'current location'} />
           <InfoWindow
@@ -110,7 +149,7 @@ export class MapContainer extends React.Component {
             </div>
           </InfoWindow>
           {this.displayMarkers()}
-          <Polyline path={this.state.stores} options={{ strokeColor: '#c94c4c'}}/>
+          <Polyline path={this.state.directions} options={{ strokeColor: '#c94c4c'}}/>
         </CurrentLocation>
       </div>
       </div>
@@ -122,5 +161,5 @@ export class MapContainer extends React.Component {
 
 // export default App;
 export default GoogleApiWrapper({
-  apiKey: 'AIzaSyDro0XKEZYd8mj42cXWVukmO0WKJstaAYs'
+  apiKey: 'AIzaSyDro0XKEZYd8mj42cXWVukmO0WKJstaAYs&callback='
 })(MapContainer);
