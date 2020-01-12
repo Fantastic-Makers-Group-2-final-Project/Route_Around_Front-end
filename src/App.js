@@ -16,11 +16,10 @@ export class MapContainer extends React.Component {
         { lat: 51.52581606811841, lng: -0.08896274754147271 },
         { lat: 51.5178767, lng: -0.0762007 }
       ],
-      directions: [],
       showingInfoWindow: false,
       activeMarker: {},
       selectedPlace: {},
-
+      postCode: ''
     }
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -82,20 +81,16 @@ export class MapContainer extends React.Component {
       travelMode: 'WALKING',
       region: 'gb'
     }, function (result, status) {
-      console.log(result);
       directionsRenderer.setDirections(result);
-      // result['routes'][0]['legs']['steps'].map(value => {
-      //   this.state.directions.push(value['start_location'])
-      // });
     })
   }
 
   handleChange(event) {
-    this.setState({value: event.target.value});
+    this.setState({postCode: event.target.value});
   }
 
   handleSubmit(event) {
-    alert('Ready for your route??');
+    alert('Ready for your route?? your postcode is ' + this.state.postCode);
   }
 
   render() {
@@ -111,7 +106,7 @@ export class MapContainer extends React.Component {
             name="postCode"
             type="text"
             value={this.state.postCode}
-            onChange={this.handleInputChange} />
+            onChange={this.handleChange} />
         </label>
         <br />
         <br />
@@ -150,7 +145,6 @@ export class MapContainer extends React.Component {
             </div>
           </InfoWindow>
           {this.displayMarkers()}
-          <Polyline path={this.state.directions} options={{ strokeColor: '#c94c4c'}}/>
         </CurrentLocation>
       </div>
       </div>
