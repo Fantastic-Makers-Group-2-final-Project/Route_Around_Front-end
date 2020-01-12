@@ -16,13 +16,16 @@ export class MapContainer extends React.Component {
         { lat: 51.52581606811841, lng: -0.08896274754147271 },
         { lat: 51.5178767, lng: -0.0762007 }
       ],
-      directions: [],
       showingInfoWindow: false,
       activeMarker: {},
       selectedPlace: {},
-
+      postCode: '',
+      distance: 0,
+      geocoder: {},
+      postCodeCoords: {}
     }
-    this.handleChange = this.handleChange.bind(this);
+    this.handlePostcodeChange = this.handlePostcodeChange.bind(this);
+    this.handleDistanceChange = this.handleDistanceChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
@@ -53,6 +56,16 @@ export class MapContainer extends React.Component {
     })
   }
 
+  getCoordinates = async (postcode) => {
+    const locator = new google.maps.Geocoder();
+    const coords = await new Promise(function(resolve, reject) {
+      locator.geocode({ 'address': postcode }, function(results, status) {
+        resolve(results);
+      })
+    })
+    return { lat: coords[0].geometry.location.lat(), lng: coords[0].geometry.location.lng() }
+  }
+
   componentDidMount() {
     var directionsService = new google.maps.DirectionsService();
     var directionsRenderer = new google.maps.DirectionsRenderer({suppressMarkers: true});
@@ -68,35 +81,37 @@ export class MapContainer extends React.Component {
       origin: new google.maps.LatLng(51.5178767, -0.0762007),
       destination: new google.maps.LatLng(51.5178767, -0.0762007),
       waypoints: [
-        {
-          location: new google.maps.LatLng(51.52581606811841, -0.06343865245844427)
-        },
-        {
-          location: new google.maps.LatLng(51.5337592191676, -0.07620069999995849)
-        },
-        {
-          location: new google.maps.LatLng(51.52581606811841, -0.08896274754147271)
-        }
+        {location: new google.maps.LatLng(51.52581606811841, -0.06343865245844427)},
+        {location: new google.maps.LatLng(51.5337592191676, -0.07620069999995849)},
+        {location: new google.maps.LatLng(51.52581606811841, -0.08896274754147271)}
       ],
       avoidHighways: true,
       travelMode: 'WALKING',
       region: 'gb'
     }, function (result, status) {
-      console.log(result);
       directionsRenderer.setDirections(result);
-      // result['routes'][0]['legs']['steps'].map(value => {
-      //   this.state.directions.push(value['start_location'])
-      // });
     })
   }
 
-  handleChange(event) {
-    this.setState({value: event.target.value});
+  handlePostcodeChange(event) {
+    this.setState({postCode: event.target.value});
+  }
+
+  handleDistanceChange(event) {
+    this.setState({distance: event.target.value});
   }
 
   handleSubmit(event) {
-    alert('Ready for your route??');
-  }
+    event.preventDefault()
+    this.getCoordinates(this.state.postCode)
+      .then(result => {
+        alert('Ready for your ' + this.state.distance + 'km, your postcode is ' + this.state.postCode);
+        this.setState({postCodeCoords: result});
+      })
+      .catch(error => {
+        alert(error)
+      })
+  };
 
   render() {
     return (
@@ -111,25 +126,19 @@ export class MapContainer extends React.Component {
             name="postCode"
             type="text"
             value={this.state.postCode}
-            onChange={this.handleInputChange} />
+            onChange={this.handlePostcodeChange} />
+            (PostCode)
         </label>
         <br />
         <br />
         <label>
-          5K:
+          Distance:
           <input
-            name="5km"
-            type="checkbox"
-            checked={this.state.distance5}
-            onChange={this.handleInputChange} />
-        </label>
-        <label>
-          10K:
-          <input
-            name="10km"
-            type="checkbox"
-            checked={this.state.distance10}
-            onChange={this.handleInputChange} />
+            name="distance"
+            type="number"
+            value={this.state.distance}
+            onChange={this.handleDistanceChange} />
+            Kilometres
         </label>
         <br />
         <br />
@@ -149,7 +158,6 @@ export class MapContainer extends React.Component {
             </div>
           </InfoWindow>
           {this.displayMarkers()}
-          <Polyline path={this.state.directions} options={{ strokeColor: '#c94c4c'}}/>
         </CurrentLocation>
       </div>
       </div>
