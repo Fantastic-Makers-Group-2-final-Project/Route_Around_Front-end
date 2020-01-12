@@ -20,7 +20,9 @@ export class MapContainer extends React.Component {
       activeMarker: {},
       selectedPlace: {},
       postCode: '',
-      distance: 0
+      distance: 0,
+      geocoder: {},
+      postCodeCoords: {}
     }
     this.handlePostcodeChange = this.handlePostcodeChange.bind(this);
     this.handleDistanceChange = this.handleDistanceChange.bind(this);
@@ -54,6 +56,16 @@ export class MapContainer extends React.Component {
     })
   }
 
+  getCoordinates = async (postcode) => {
+    const locator = new google.maps.Geocoder();
+    const coords = await new Promise(function(resolve, reject) {
+      locator.geocode({ 'address': postcode }, function(results, status) {
+        resolve(results);
+      })
+    })
+    return { lat: coords[0].geometry.location.lat(), lng: coords[0].geometry.location.lng() }
+  }
+
   componentDidMount() {
     var directionsService = new google.maps.DirectionsService();
     var directionsRenderer = new google.maps.DirectionsRenderer({suppressMarkers: true});
@@ -69,15 +81,9 @@ export class MapContainer extends React.Component {
       origin: new google.maps.LatLng(51.5178767, -0.0762007),
       destination: new google.maps.LatLng(51.5178767, -0.0762007),
       waypoints: [
-        {
-          location: new google.maps.LatLng(51.52581606811841, -0.06343865245844427)
-        },
-        {
-          location: new google.maps.LatLng(51.5337592191676, -0.07620069999995849)
-        },
-        {
-          location: new google.maps.LatLng(51.52581606811841, -0.08896274754147271)
-        }
+        {location: new google.maps.LatLng(51.52581606811841, -0.06343865245844427)},
+        {location: new google.maps.LatLng(51.5337592191676, -0.07620069999995849)},
+        {location: new google.maps.LatLng(51.52581606811841, -0.08896274754147271)}
       ],
       avoidHighways: true,
       travelMode: 'WALKING',
@@ -96,8 +102,16 @@ export class MapContainer extends React.Component {
   }
 
   handleSubmit(event) {
-    alert('Ready for your ' + this.state.distance + 'km, your postcode is ' + this.state.postCode);
-  }
+    event.preventDefault()
+    this.getCoordinates(this.state.postCode)
+      .then(result => {
+        alert('Ready for your ' + this.state.distance + 'km, your postcode is ' + this.state.postCode);
+        this.setState({postCodeCoords: result});
+      })
+      .catch(error => {
+        alert(error)
+      })
+  };
 
   render() {
     return (
@@ -113,6 +127,7 @@ export class MapContainer extends React.Component {
             type="text"
             value={this.state.postCode}
             onChange={this.handlePostcodeChange} />
+            (PostCode)
         </label>
         <br />
         <br />
@@ -123,6 +138,7 @@ export class MapContainer extends React.Component {
             type="number"
             value={this.state.distance}
             onChange={this.handleDistanceChange} />
+            Kilometres
         </label>
         <br />
         <br />
