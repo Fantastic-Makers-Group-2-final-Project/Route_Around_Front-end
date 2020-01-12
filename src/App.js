@@ -103,11 +103,11 @@ export class MapContainer extends React.Component {
     return (
       <div className='App'>
       <div>
-        <h1>Route Around App</h1>
+        <h1>Route Around</h1>
       <div>
       <form className='App' onSubmit={this.handleSubmit}>
         <label>
-          Post Code:
+          Start Location:
           <input
             name="postCode"
             type="text"

@@ -5,9 +5,9 @@ const mapStyles = {
   map: {
     position: 'absolute',
     marginTop: '1%',
-    marginLeft: '25%',
-    marginRight: '25%',
-    width: '50%',
+    marginLeft: '1%',
+    marginRight: '1%',
+    width: '100%',
     height: '75%'
   }
 }; 
