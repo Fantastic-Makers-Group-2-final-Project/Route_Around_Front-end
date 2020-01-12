@@ -19,9 +19,11 @@ export class MapContainer extends React.Component {
       showingInfoWindow: false,
       activeMarker: {},
       selectedPlace: {},
-      postCode: ''
+      postCode: '',
+      distance: 0
     }
-    this.handleChange = this.handleChange.bind(this);
+    this.handlePostcodeChange = this.handlePostcodeChange.bind(this);
+    this.handleDistanceChange = this.handleDistanceChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
@@ -85,12 +87,16 @@ export class MapContainer extends React.Component {
     })
   }
 
-  handleChange(event) {
+  handlePostcodeChange(event) {
     this.setState({postCode: event.target.value});
   }
 
+  handleDistanceChange(event) {
+    this.setState({distance: event.target.value});
+  }
+
   handleSubmit(event) {
-    alert('Ready for your route, your postcode is ' + this.state.postCode);
+    alert('Ready for your ' + this.state.distance + 'km, your postcode is ' + this.state.postCode);
   }
 
   render() {
@@ -106,26 +112,17 @@ export class MapContainer extends React.Component {
             name="postCode"
             type="text"
             value={this.state.postCode}
-            onChange={this.handleChange} />
+            onChange={this.handlePostcodeChange} />
         </label>
         <br />
         <br />
         <label>
-          5 kilometers:
+          Distance:
           <input
-            name="5km"
-            type="checkbox"
-            checked={this.state.distance5}
-            onChange={this.handleInputChange} />
-        </label>
-        <br />
-        <label>
-          10 kilometers:
-          <input
-            name="10km"
-            type="checkbox"
-            checked={this.state.distance10}
-            onChange={this.handleInputChange} />
+            name="distance"
+            type="number"
+            value={this.state.distance}
+            onChange={this.handleDistanceChange} />
         </label>
         <br />
         <br />
