@@ -90,7 +90,7 @@ export class MapContainer extends React.Component {
   }
 
   handleSubmit(event) {
-    alert('Ready for your route?? your postcode is ' + this.state.postCode);
+    alert('Ready for your route, your postcode is ' + this.state.postCode);
   }
 
   render() {
