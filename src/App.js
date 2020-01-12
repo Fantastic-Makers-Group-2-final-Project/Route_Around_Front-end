@@ -55,7 +55,7 @@ export class MapContainer extends React.Component {
 
   componentDidMount() {
     var directionsService = new google.maps.DirectionsService();
-    var directionsRenderer = new google.maps.DirectionsRenderer();
+    var directionsRenderer = new google.maps.DirectionsRenderer({suppressMarkers: true});
     var center = new google.maps.LatLng(51.5178767, -0.0762007)
     var mapOptions = {
       center: center,
