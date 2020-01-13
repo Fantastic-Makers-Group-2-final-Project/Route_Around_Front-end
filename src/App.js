@@ -9,13 +9,7 @@ export class MapContainer extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      stores: [
-        { lat: 51.5178767, lng: -0.0762007 },
-        { lat: 51.52581606811841, lng: -0.06343865245844427 },
-        { lat: 51.5337592191676, lng: -0.07620069999995849 },
-        { lat: 51.52581606811841, lng: -0.08896274754147271 },
-        { lat: 51.5178767, lng: -0.0762007 }
-      ],
+      stores: [],
       showingInfoWindow: false,
       activeMarker: {},
       selectedPlace: {},
@@ -66,33 +60,6 @@ export class MapContainer extends React.Component {
     return { lat: coords[0].geometry.location.lat(), lng: coords[0].geometry.location.lng() }
   }
 
-  componentDidMount() {
-    var directionsService = new google.maps.DirectionsService();
-    var directionsRenderer = new google.maps.DirectionsRenderer({suppressMarkers: true});
-    var center = new google.maps.LatLng(51.5178767, -0.0762007)
-    var mapOptions = {
-      center: center,
-      zoom: 17
-    }
-    var map = new google.maps.Map(document.getElementById('map'), mapOptions);
-    directionsRenderer.setMap(map);
-
-    directionsService.route({
-      origin: new google.maps.LatLng(this.state.stores[0]),
-      destination: new google.maps.LatLng(this.state.stores[4]),
-      waypoints: [
-        {location: new google.maps.LatLng(this.state.stores[1])},
-        {location: new google.maps.LatLng(this.state.stores[2])},
-        {location: new google.maps.LatLng(this.state.stores[3])}
-      ],
-      avoidHighways: true,
-      travelMode: 'WALKING',
-      region: 'gb'
-    }, function (result, status) {
-      directionsRenderer.setDirections(result);
-    })
-  }
-
   handlePostcodeChange(event) {
     this.setState({postCode: event.target.value});
   }
@@ -111,7 +78,6 @@ export class MapContainer extends React.Component {
         'coordinates': this.state.postCodeCoords,
         'distance': this.state.distance
       }
-      console.log(data)
       fetch('https://routearound-back.herokuapp.com/generate-waypoint-coordinates', {
         method: 'POST',
         headers: {
@@ -120,19 +86,56 @@ export class MapContainer extends React.Component {
         body: JSON.stringify(data)
       })
       .then((response) => {
-        console.log(response)
         return response.json();
       })
       .then((myJson) => {
-        console.log(myJson);
         this.setState({stores: myJson})
-        console.log(this.state.stores)
       });
     })
     .catch(error => {
       alert(error)
     })
   };
+
+  componentDidMount() {
+    var directionsService = new google.maps.DirectionsService();
+    var directionsRenderer = new google.maps.DirectionsRenderer({suppressMarkers: true});
+    var center = new google.maps.LatLng(51.5178767, -0.0762007)
+    var mapOptions = {
+      center: center,
+      zoom: 5
+    }
+    var map = new google.maps.Map(document.getElementById('map'), mapOptions);
+    directionsRenderer.setMap(map);
+  }
+
+  componentDidUpdate() {
+    var directionsService = new google.maps.DirectionsService();
+    var directionsRenderer = new google.maps.DirectionsRenderer({suppressMarkers: true});
+    var center = new google.maps.LatLng(51.5178767, -0.0762007)
+    var mapOptions = {
+      center: center,
+      zoom: 17
+    }
+    var map = new google.maps.Map(document.getElementById('map'), mapOptions);
+    directionsRenderer.setMap(map);
+
+    directionsService.route({
+      origin: new google.maps.LatLng(this.state.stores[0]),
+      destination: new google.maps.LatLng(this.state.stores[0]),
+      waypoints: [
+          {location: new google.maps.LatLng(this.state.stores[1])},
+          {location: new google.maps.LatLng(this.state.stores[2])},
+          {location: new google.maps.LatLng(this.state.stores[3])}
+        ],
+      avoidHighways: true,
+      travelMode: 'WALKING',
+      region: 'gb'
+    }, function (result, status) {
+      directionsRenderer.setDirections(result);
+    })
+  }
+
 
 
   render() {
