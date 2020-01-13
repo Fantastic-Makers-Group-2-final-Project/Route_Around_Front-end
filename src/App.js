@@ -78,12 +78,12 @@ export class MapContainer extends React.Component {
     directionsRenderer.setMap(map);
 
     directionsService.route({
-      origin: new google.maps.LatLng(51.5178767, -0.0762007),
-      destination: new google.maps.LatLng(51.5178767, -0.0762007),
+      origin: new google.maps.LatLng(this.state.stores[0]),
+      destination: new google.maps.LatLng(this.state.stores[4]),
       waypoints: [
-        {location: new google.maps.LatLng(51.52581606811841, -0.06343865245844427)},
-        {location: new google.maps.LatLng(51.5337592191676, -0.07620069999995849)},
-        {location: new google.maps.LatLng(51.52581606811841, -0.08896274754147271)}
+        {location: new google.maps.LatLng(this.state.stores[1])},
+        {location: new google.maps.LatLng(this.state.stores[2])},
+        {location: new google.maps.LatLng(this.state.stores[3])}
       ],
       avoidHighways: true,
       travelMode: 'WALKING',
@@ -104,14 +104,36 @@ export class MapContainer extends React.Component {
   handleSubmit(event) {
     event.preventDefault()
     this.getCoordinates(this.state.postCode)
-      .then(result => {
-        alert('Ready for your ' + this.state.distance + 'km, your postcode is ' + this.state.postCode);
-        this.setState({postCodeCoords: result});
+    .then(result => {
+      alert('Ready for your ' + this.state.distance + 'km, your postcode is ' + this.state.postCode);
+      this.setState({postCodeCoords: result});
+      var data = {
+        'coordinates': this.state.postCodeCoords,
+        'distance': this.state.distance
+      }
+      console.log(data)
+      fetch('https://routearound-back.herokuapp.com/generate-waypoint-coordinates', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data)
       })
-      .catch(error => {
-        alert(error)
+      .then((response) => {
+        console.log(response)
+        return response.json();
       })
+      .then((myJson) => {
+        console.log(myJson);
+        this.setState({stores: myJson})
+        console.log(this.state.stores)
+      });
+    })
+    .catch(error => {
+      alert(error)
+    })
   };
+
 
   render() {
     return (
