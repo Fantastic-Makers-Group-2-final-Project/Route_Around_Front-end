@@ -8,6 +8,7 @@ import CurrentLocation from './CurrentLocation';
 export class MapContainer extends React.Component {
   constructor(props) {
     super(props);
+    const { lat, lng } = this.props.initialCenter
     this.state = {
       stores: [],
       showingInfoWindow: false,
@@ -16,7 +17,11 @@ export class MapContainer extends React.Component {
       postCode: '',
       distance: 0,
       geocoder: {},
-      postCodeCoords: {}
+      postCodeCoords: {},
+      currentLocation: {
+        lat: lat,
+        lng: lng
+      }
     }
     this.handlePostcodeChange = this.handlePostcodeChange.bind(this);
     this.handleDistanceChange = this.handleDistanceChange.bind(this);
@@ -60,6 +65,22 @@ export class MapContainer extends React.Component {
     return { lat: coords[0].geometry.location.lat(), lng: coords[0].geometry.location.lng() }
   }
 
+  setCurrentLocation = async () => {
+    if (this.props.centerAroundCurrentLocation) {
+      if (navigator && navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(pos => {
+          const coords = pos.coords;
+          this.setState({
+            currentLocation: {
+              lat: coords.latitude,
+              lng: coords.longitude
+            }
+          });
+        });
+      }
+    }
+  }
+
   handlePostcodeChange(event) {
     this.setState({postCode: event.target.value});
   }
@@ -98,28 +119,34 @@ export class MapContainer extends React.Component {
   };
 
   componentDidMount() {
+    this.setCurrentLocation();
+
     var directionsService = new google.maps.DirectionsService();
     var directionsRenderer = new google.maps.DirectionsRenderer();
-    var center = new google.maps.LatLng(51.5158, -0.1295)
+    var center = new google.maps.LatLng(this.state.currentLocation.lat, this.state.currentLocation.lng)
     var mapOptions = {
       center: center,
-      zoom: 12
+      zoom: 16
     }
     var map = new google.maps.Map(document.getElementById('map'), mapOptions);
     directionsRenderer.setMap(map);
   }
 
   componentDidUpdate() {
+    this.setCurrentLocation();
+
     var directionsService = new google.maps.DirectionsService();
     var directionsRenderer = new google.maps.DirectionsRenderer({suppressMarkers: true});
-    var center = new google.maps.LatLng(51.5158, -0.1295)
+    var center = new google.maps.LatLng(this.state.currentLocation.lat, this.state.currentLocation.lng)
     var mapOptions = {
       center: center,
-      zoom: 12
+      zoom: 16
     }
     var map = new google.maps.Map(document.getElementById('map'), mapOptions);
-    var marker = new google.maps.Marker({position: this.state.stores[0], animation: google.maps.Animation.DROP})
-    marker.setMap(map);
+    var markerStart = new google.maps.Marker({position: this.state.stores[0]})
+    var markerCurrent = new google.maps.Marker({position: this.state.currentLocation})
+    markerStart.setMap(map);
+    markerCurrent.setMap(map);
     directionsRenderer.setMap(map);
 
     directionsService.route({
@@ -183,6 +210,10 @@ export class MapContainer extends React.Component {
               <h4>{this.state.selectedPlace.name}</h4>
             </div>
           </InfoWindow>
+          <Marker
+                icon="https://www.robotwoods.com/dev/misc/bluecircle.png"
+                position={this.state.currentLocation}
+            />
           {this.displayMarkers()}
         </CurrentLocation>
       </div>
@@ -197,3 +228,13 @@ export class MapContainer extends React.Component {
 export default GoogleApiWrapper({
   apiKey: 'AIzaSyDro0XKEZYd8mj42cXWVukmO0WKJstaAYs&callback='
 })(MapContainer);
+
+MapContainer.defaultProps = {
+  zoom: 17,
+  initialCenter: {
+    lat: 51.4934,
+    lng: 0.0098
+  },
+  centerAroundCurrentLocation: true,
+  visible: true
+};

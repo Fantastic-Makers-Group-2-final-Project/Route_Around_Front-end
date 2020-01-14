@@ -8,7 +8,7 @@ const mapStyles = {
     marginLeft: '1%',
     marginRight: '1%',
     width: '100%',
-    height: '75%'
+    height: '50%'
   }
 };
 
