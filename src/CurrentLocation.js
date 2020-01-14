@@ -10,7 +10,7 @@ const mapStyles = {
     width: '100%',
     height: '75%'
   }
-}; 
+};
 
 export class CurrentLocation extends React.Component {
   constructor(props) {
@@ -124,6 +124,6 @@ CurrentLocation.defaultProps = {
     lat: 51.5137188,
     lng: -0.0976579
   },
-  centerAroundCurrentLocation: false,
+  centerAroundCurrentLocation: true,
   visible: true
 };

@@ -9,6 +9,7 @@ export class MapContainer extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      startPoint: [],
       stores: [],
       showingInfoWindow: false,
       activeMarker: {},
@@ -41,7 +42,7 @@ export class MapContainer extends React.Component {
   };
 
   displayMarkers = () => {
-    return this.state.stores.map((store, index) => {
+    return this.state.startPoint.map((store, index) => {
       return <Marker key={index} id={index} position={{
        lat: store.lat,
        lng: store.lng
@@ -90,6 +91,7 @@ export class MapContainer extends React.Component {
       })
       .then((myJson) => {
         this.setState({stores: myJson})
+        this.setState({startPoint: [this.state.stores[0]]})
       });
     })
     .catch(error => {
@@ -99,11 +101,11 @@ export class MapContainer extends React.Component {
 
   componentDidMount() {
     var directionsService = new google.maps.DirectionsService();
-    var directionsRenderer = new google.maps.DirectionsRenderer({suppressMarkers: true});
-    var center = new google.maps.LatLng(51.5178767, -0.0762007)
+    var directionsRenderer = new google.maps.DirectionsRenderer();
+    var center = new google.maps.LatLng(51.5158, -0.1295)
     var mapOptions = {
       center: center,
-      zoom: 5
+      zoom: 12
     }
     var map = new google.maps.Map(document.getElementById('map'), mapOptions);
     directionsRenderer.setMap(map);
@@ -112,12 +114,14 @@ export class MapContainer extends React.Component {
   componentDidUpdate() {
     var directionsService = new google.maps.DirectionsService();
     var directionsRenderer = new google.maps.DirectionsRenderer({suppressMarkers: true});
-    var center = new google.maps.LatLng(51.5178767, -0.0762007)
+    var center = new google.maps.LatLng(51.5158, -0.1295)
     var mapOptions = {
       center: center,
-      zoom: 17
+      zoom: 12
     }
     var map = new google.maps.Map(document.getElementById('map'), mapOptions);
+    var marker = new google.maps.Marker({position: this.state.stores[0], animation: google.maps.Animation.DROP})
+    marker.setMap(map);
     directionsRenderer.setMap(map);
 
     directionsService.route({
@@ -135,7 +139,6 @@ export class MapContainer extends React.Component {
       directionsRenderer.setDirections(result);
     })
   }
-
 
 
   render() {
