@@ -9,7 +9,6 @@ export class MapContainer extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      startPoint: [],
       stores: [],
       showingInfoWindow: false,
       activeMarker: {},
@@ -42,7 +41,7 @@ export class MapContainer extends React.Component {
   };
 
   displayMarkers = () => {
-    return this.state.startPoint.map((store, index) => {
+    return this.state.stores.map((store, index) => {
       return <Marker key={index} id={index} position={{
        lat: store.lat,
        lng: store.lng
@@ -91,7 +90,6 @@ export class MapContainer extends React.Component {
       })
       .then((myJson) => {
         this.setState({stores: myJson})
-        this.setState({startPoint: [this.state.stores[0]]})
       });
     })
     .catch(error => {
