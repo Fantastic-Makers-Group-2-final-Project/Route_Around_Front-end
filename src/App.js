@@ -111,7 +111,7 @@ export class MapContainer extends React.Component {
 
   componentDidUpdate() {
     var directionsService = new google.maps.DirectionsService();
-    var directionsRenderer = new google.maps.DirectionsRenderer({suppressMarkers: true});
+    var directionsRenderer = new google.maps.DirectionsRenderer({suppressMarkers: true, draggable: true, map: map, panel: document.getElementById('right-panel')});
     var center = new google.maps.LatLng(51.5178767, -0.0762007)
     var mapOptions = {
       center: center,
@@ -133,9 +133,22 @@ export class MapContainer extends React.Component {
       region: 'gb'
     }, function (result, status) {
       directionsRenderer.setDirections(result);
+      directionsRenderer.addListener('directions_changed', function() {
+          this.computeTotalDistance(directionsRenderer.getDirections());
+        });
     })
+
   }
 
+  computeTotalDistance = (result) => {
+    var total = 0;
+    var myroute = result.routes[0];
+    for (var i = 0; i < myroute.legs.length; i++) {
+      total += myroute.legs[i].distance.value;
+    }
+    total = total / 1000;
+    document.getElementById('total').innerHTML = total + 'km';
+  }
 
 
   render() {
@@ -167,6 +180,12 @@ export class MapContainer extends React.Component {
         </label>
         <br />
         <br />
+        <div id="righ-panel">
+            <label>
+              <p>Total Distance: <span id="total"></span></p>
+            </label>
+        </div>
+        <br />
         <input type="submit" value="GO!" />
         <br />
       </form>
@@ -185,6 +204,8 @@ export class MapContainer extends React.Component {
           {this.displayMarkers()}
         </CurrentLocation>
       </div>
+
+
       </div>
       </div>
       </div>
