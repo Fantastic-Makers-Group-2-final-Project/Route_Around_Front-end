@@ -9,13 +9,7 @@ export class MapContainer extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      stores: [
-        { lat: 51.5178767, lng: -0.0762007 },
-        { lat: 51.52581606811841, lng: -0.06343865245844427 },
-        { lat: 51.5337592191676, lng: -0.07620069999995849 },
-        { lat: 51.52581606811841, lng: -0.08896274754147271 },
-        { lat: 51.5178767, lng: -0.0762007 }
-      ],
+      stores: [],
       showingInfoWindow: false,
       activeMarker: {},
       selectedPlace: {},
@@ -66,33 +60,6 @@ export class MapContainer extends React.Component {
     return { lat: coords[0].geometry.location.lat(), lng: coords[0].geometry.location.lng() }
   }
 
-  componentDidMount() {
-    var directionsService = new google.maps.DirectionsService();
-    var directionsRenderer = new google.maps.DirectionsRenderer({suppressMarkers: true});
-    var center = new google.maps.LatLng(51.5178767, -0.0762007)
-    var mapOptions = {
-      center: center,
-      zoom: 17
-    }
-    var map = new google.maps.Map(document.getElementById('map'), mapOptions);
-    directionsRenderer.setMap(map);
-
-    directionsService.route({
-      origin: new google.maps.LatLng(51.5178767, -0.0762007),
-      destination: new google.maps.LatLng(51.5178767, -0.0762007),
-      waypoints: [
-        {location: new google.maps.LatLng(51.52581606811841, -0.06343865245844427)},
-        {location: new google.maps.LatLng(51.5337592191676, -0.07620069999995849)},
-        {location: new google.maps.LatLng(51.52581606811841, -0.08896274754147271)}
-      ],
-      avoidHighways: true,
-      travelMode: 'WALKING',
-      region: 'gb'
-    }, function (result, status) {
-      directionsRenderer.setDirections(result);
-    })
-  }
-
   handlePostcodeChange(event) {
     this.setState({postCode: event.target.value});
   }
@@ -104,14 +71,72 @@ export class MapContainer extends React.Component {
   handleSubmit(event) {
     event.preventDefault()
     this.getCoordinates(this.state.postCode)
-      .then(result => {
-        alert('Ready for your ' + this.state.distance + 'km, your postcode is ' + this.state.postCode);
-        this.setState({postCodeCoords: result});
+    .then(result => {
+      alert('Ready for your ' + this.state.distance + 'km, your postcode is ' + this.state.postCode);
+      this.setState({postCodeCoords: result});
+      var data = {
+        'coordinates': this.state.postCodeCoords,
+        'distance': this.state.distance
+      }
+      fetch('https://routearound-back.herokuapp.com/generate-waypoint-coordinates', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data)
       })
-      .catch(error => {
-        alert(error)
+      .then((response) => {
+        return response.json();
       })
+      .then((myJson) => {
+        this.setState({stores: myJson})
+      });
+    })
+    .catch(error => {
+      alert(error)
+    })
   };
+
+  componentDidMount() {
+    var directionsService = new google.maps.DirectionsService();
+    var directionsRenderer = new google.maps.DirectionsRenderer({suppressMarkers: true});
+    var center = new google.maps.LatLng(51.5178767, -0.0762007)
+    var mapOptions = {
+      center: center,
+      zoom: 5
+    }
+    var map = new google.maps.Map(document.getElementById('map'), mapOptions);
+    directionsRenderer.setMap(map);
+  }
+
+  componentDidUpdate() {
+    var directionsService = new google.maps.DirectionsService();
+    var directionsRenderer = new google.maps.DirectionsRenderer({suppressMarkers: true});
+    var center = new google.maps.LatLng(51.5178767, -0.0762007)
+    var mapOptions = {
+      center: center,
+      zoom: 17
+    }
+    var map = new google.maps.Map(document.getElementById('map'), mapOptions);
+    directionsRenderer.setMap(map);
+
+    directionsService.route({
+      origin: new google.maps.LatLng(this.state.stores[0]),
+      destination: new google.maps.LatLng(this.state.stores[0]),
+      waypoints: [
+          {location: new google.maps.LatLng(this.state.stores[1])},
+          {location: new google.maps.LatLng(this.state.stores[2])},
+          {location: new google.maps.LatLng(this.state.stores[3])}
+        ],
+      avoidHighways: true,
+      travelMode: 'WALKING',
+      region: 'gb'
+    }, function (result, status) {
+      directionsRenderer.setDirections(result);
+    })
+  }
+
+
 
   render() {
     return (
