@@ -18,8 +18,6 @@ export class MapContainer extends React.Component {
       selectedPlace: {},
       postCode: '',
       distance: 0,
-      miles_label: "miles",
-      km_label: "km",
       actualDistance: 0,
       geocoder: {},
       postCodeCoords: {},
