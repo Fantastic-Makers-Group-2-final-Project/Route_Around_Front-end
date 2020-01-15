@@ -191,7 +191,7 @@ export class MapContainer extends React.Component {
 
     var directionsRenderer = new google.maps.DirectionsRenderer({suppressMarkers: true, draggable: true, map: map, panel: document.getElementById('#')});
     var center = new google.maps.LatLng(51.5178767, -0.0762007)
-    var mapOptions = {
+    var mapOptions1 = {
 
       center: center,
       zoom: 16
