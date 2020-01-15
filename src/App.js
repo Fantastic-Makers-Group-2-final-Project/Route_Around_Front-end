@@ -97,6 +97,7 @@ export class MapContainer extends React.Component {
         ],
         avoidHighways: true,
         travelMode: 'WALKING',
+        unitSystem: google.maps.UnitSystem.METRIC,
         region: 'gb'
       }, function (result, _status) {
         var total = 0;
@@ -333,6 +334,7 @@ export class MapContainer extends React.Component {
       ],
       avoidHighways: true,
       travelMode: 'WALKING',
+      unitSystem: google.maps.UnitSystem.METRIC,
       region: 'gb'
     }, function (result, status) {
       directionsRenderer.setDirections(result);
