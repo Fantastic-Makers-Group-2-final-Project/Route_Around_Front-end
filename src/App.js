@@ -340,10 +340,10 @@ export default GoogleApiWrapper({
 })(MapContainer);
 
 MapContainer.defaultProps = {
-  zoom: 17,
+  zoom: 16,
   initialCenter: {
-    lat: 51.4934,
-    lng: 0.0098
+    lat: 51.5178767,
+    lng: -0.0762007
   },
   centerAroundCurrentLocation: true,
   visible: true
