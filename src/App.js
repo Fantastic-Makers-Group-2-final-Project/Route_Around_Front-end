@@ -18,6 +18,8 @@ export class MapContainer extends React.Component {
       selectedPlace: {},
       postCode: '',
       distance: 0,
+      miles_label: "miles",
+      km_label: "km",
       actualDistance: 0,
       geocoder: {},
       postCodeCoords: {},
@@ -43,7 +45,7 @@ export class MapContainer extends React.Component {
   onClose = props => {
     if (this.state.showingInfoWindow) {
       this.setState({
-        showingInfoWindow: false,
+        showingInfoWindow: true,
         activeMarker: null
       });
     }
@@ -370,14 +372,19 @@ export class MapContainer extends React.Component {
             type="number"
             value={this.state.distance}
             onChange={this.handleDistanceChange} />
-            Kilometres
+              <span >
+                <select id="unit">
+                  <option value="miles">Miles</option>
+                  <option value="km" defaultValue>Kilometres</option>
+                </select>
+              </span>
         </label>
         <br />
         <br />
 
         <div id="right-panel">
             <label>
-              <p>Total Distance: <span id="total">{this.state.actualDistance}</span></p>
+              <p>Total Distance: <span id={document.getElementById('unit') !== null && document.getElementById('unit').options[document.getElementById('unit').options.selectedIndex].text === 'Miles' ? this.state.actualDistance = Math.round(this.state.actualDistance / 0.621371) : this.state.actualDistance }>{this.state.actualDistance}</span></p> <span id="unitLabel">{document.getElementById('unit') !== null && document.getElementById('unit').options[document.getElementById('unit').options.selectedIndex].text === 'Miles' ? 'miles' : 'km'}</span>
             </label>
         </div>
         <br />
