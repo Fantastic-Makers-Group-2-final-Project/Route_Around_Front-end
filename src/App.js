@@ -17,6 +17,7 @@ export class MapContainer extends React.Component {
       selectedPlace: {},
       postCode: '',
       distance: 0,
+      actualDistance: 0,
       geocoder: {},
       postCodeCoords: {},
       currentLocation: {
@@ -67,6 +68,46 @@ export class MapContainer extends React.Component {
     return { lat: coords[0].geometry.location.lat(), lng: coords[0].geometry.location.lng() }
   }
 
+
+  computeTotalDistance = async (coordsData) => {
+    var directionsService = new google.maps.DirectionsService();
+    var directionsRenderer = new google.maps.DirectionsRenderer({suppressMarkers: true, draggable: true, map: map, panel: document.getElementById('right-panel')});
+    var center = new google.maps.LatLng(51.5178767, -0.0762007);
+
+    var mapOptions = {
+      center: center,
+      zoom: 17
+    };
+
+    var map = new google.maps.Map(document.getElementById('map'), mapOptions);
+
+    directionsRenderer.setMap(map);
+
+    let actualDistance = await new Promise((resolve, reject) => {
+      directionsService.route({
+        origin: new google.maps.LatLng(coordsData[0]),
+        destination: new google.maps.LatLng(coordsData[0]),
+        waypoints: [
+          {location: new google.maps.LatLng(coordsData[1])},
+          {location: new google.maps.LatLng(coordsData[2])},
+          {location: new google.maps.LatLng(coordsData[3])}
+        ],
+        avoidHighways: true,
+        travelMode: 'WALKING',
+        region: 'gb'
+      }, function (result, _status) {
+        var total = 0;
+        var route = result.routes[0];
+        for (var i = 0; i < route.legs.length; i++) {
+          total += route.legs[i].distance.value;
+        }
+        resolve(total / 1000);
+      })
+    });
+
+    return actualDistance
+  };
+
   setCurrentLocation = async () => {
     if (this.props.centerAroundCurrentLocation) {
       if (navigator && navigator.geolocation) {
@@ -82,6 +123,7 @@ export class MapContainer extends React.Component {
       }
     }
   }
+
 
   handlePostcodeChange(event) {
     this.setState({postCode: event.target.value});
@@ -115,10 +157,13 @@ export class MapContainer extends React.Component {
       })
       .then((response) => {
         return response.json();
+      }).then(async (coordsData) => {
+        let actualDistance = await this.computeTotalDistance(coordsData);
+        return { stores: coordsData, actualDistance: actualDistance }
       })
-      .then((myJson) => {
-        this.setState({stores: myJson})
-      });
+      .then((data) => {
+        this.setState({stores: data.stores, actualDistance: data.actualDistance})
+      })
     })
     .catch(error => {
       alert(error)
@@ -143,9 +188,11 @@ export class MapContainer extends React.Component {
     this.setCurrentLocation();
 
     var directionsService = new google.maps.DirectionsService();
-    var directionsRenderer = new google.maps.DirectionsRenderer({suppressMarkers: true});
-    var center = new google.maps.LatLng(this.state.currentLocation.lat, this.state.currentLocation.lng)
-    var mapOptions1 = {
+
+    var directionsRenderer = new google.maps.DirectionsRenderer({suppressMarkers: true, draggable: true, map: map, panel: document.getElementById('#')});
+    var center = new google.maps.LatLng(51.5178767, -0.0762007)
+    var mapOptions = {
+
       center: center,
       zoom: 16
     }
@@ -253,10 +300,10 @@ export class MapContainer extends React.Component {
       origin: new google.maps.LatLng(this.state.stores[0]),
       destination: new google.maps.LatLng(this.state.stores[0]),
       waypoints: [
-          {location: new google.maps.LatLng(this.state.stores[1])},
-          {location: new google.maps.LatLng(this.state.stores[2])},
-          {location: new google.maps.LatLng(this.state.stores[3])}
-        ],
+        {location: new google.maps.LatLng(this.state.stores[1])},
+        {location: new google.maps.LatLng(this.state.stores[2])},
+        {location: new google.maps.LatLng(this.state.stores[3])}
+      ],
       avoidHighways: true,
       travelMode: 'WALKING',
       region: 'gb'
@@ -264,7 +311,6 @@ export class MapContainer extends React.Component {
       directionsRenderer.setDirections(result);
     })
   }
-
 
   render() {
     return (
@@ -299,8 +345,15 @@ export class MapContainer extends React.Component {
         </label>
         <br />
         <br />
-        <input type="submit" value="Generate Route!" />
+
+        <div id="right-panel">
+            <label>
+              <p>Total Distance: <span id="total">{this.state.actualDistance}</span></p>
+            </label>
+        </div>
         <br />
+        <input type="submit" value="GO!" />
+
         <br />
       </form>
       <div id='map'>
@@ -322,6 +375,8 @@ export class MapContainer extends React.Component {
           {this.displayMarkers()}
         </Map>
       </div>
+
+
       </div>
       </div>
       </div>
