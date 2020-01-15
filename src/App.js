@@ -211,12 +211,11 @@ export class MapContainer extends React.Component {
   }
 
   componentDidUpdate() {
-    this.setCurrentLocation();
 
     var directionsService = new google.maps.DirectionsService();
 
     var directionsRenderer = new google.maps.DirectionsRenderer({suppressMarkers: true, draggable: true, map: map, panel: document.getElementById('#')});
-    var center = new google.maps.LatLng(51.5178767, -0.0762007)
+    var center = new google.maps.LatLng(this.state.currentLocation.lat, this.state.currentLocation.lng)
     var mapOptions1 = {
 
       center: center,
@@ -405,8 +404,6 @@ export class MapContainer extends React.Component {
           {this.displayMarkers()}
         </Map>
       </div>
-
-
       </div>
       </div>
       </div>
