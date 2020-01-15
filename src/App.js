@@ -140,6 +140,29 @@ export class MapContainer extends React.Component {
 
   handleSubmit(event) {
     event.preventDefault()
+    if (this.state.postCode ==='') { alert('Generating trip for ' + this.state.distance + 'km, based on your current co-ordinates of '
+    + this.state.currentLocation.lat + ', ' + this.state.currentLocation.lng)
+    var data = {
+      'coordinates': this.state.currentLocation,
+      'distance': this.state.distance
+    }
+    fetch('https://routearound-back.herokuapp.com/generate-waypoint-coordinates', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data)
+    })
+    .then((response) => {
+      return response.json();
+    }).then(async (coordsData) => {
+      let actualDistance = await this.computeTotalDistance(coordsData);
+      return { stores: coordsData, actualDistance: actualDistance }
+    })
+    .then((data) => {
+      this.setState({stores: data.stores, actualDistance: data.actualDistance})
+    })
+  } else {
     this.getCoordinates(this.state.postCode)
     .then(result => {
       alert('Ready for your ' + this.state.distance + 'km, your postcode is ' + this.state.postCode);
@@ -168,6 +191,8 @@ export class MapContainer extends React.Component {
     .catch(error => {
       alert(error)
     })
+
+  }
   };
 
   componentDidMount() {
@@ -330,7 +355,7 @@ export class MapContainer extends React.Component {
             type="text"
             value={this.state.postCode}
             onChange={this.handlePostcodeChange} />
-            (PostCode)
+          <br />  (PostCode - leave blank for current location.)
         </label>
         <br />
         <br />
