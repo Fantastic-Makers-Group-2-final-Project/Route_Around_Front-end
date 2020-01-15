@@ -3,6 +3,7 @@ import React from 'react';
 import logo from './logo.svg';
 import './App.css';
 import { Map, GoogleApiWrapper, Marker, InfoWindow, Polyline, DirectionsRenderer, GoogleMapReact } from 'google-maps-react';
+import { CopyToClipboard } from 'react-copy-to-clipboard'
 import CurrentLocation from './CurrentLocation';
 
 export class MapContainer extends React.Component {
@@ -27,8 +28,8 @@ export class MapContainer extends React.Component {
     }
     this.handlePostcodeChange = this.handlePostcodeChange.bind(this);
     this.handleDistanceChange = this.handleDistanceChange.bind(this);
+    this.handleToggleDarkMode = this.handleToggleDarkMode.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
-    this.toggleDarkMode = this.toggleDarkMode.bind(this);
   }
 
   onMarkerClick = (props, marker, e) =>
@@ -133,7 +134,7 @@ export class MapContainer extends React.Component {
     this.setState({distance: event.target.value});
   }
 
-  toggleDarkMode(event) {
+  handleToggleDarkMode(event) {
     let darkMode = this.state.darkMode
     this.setState({darkMode: !darkMode})
   }
@@ -314,8 +315,8 @@ export class MapContainer extends React.Component {
         document.body.classList.remove('dark-mode');
         var map = new google.maps.Map(document.getElementById('map'), mapOptions1);
     }
-
-    var markerStart = new google.maps.Marker({position: this.state.stores[0]})
+    var image1 = 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png'
+    var markerStart = new google.maps.Marker({position: this.state.stores[0], icon: image1})
     var markerCurrent = new google.maps.Marker({position: this.state.currentLocation})
     markerStart.setMap(map);
     markerCurrent.setMap(map);
@@ -343,7 +344,11 @@ export class MapContainer extends React.Component {
       <div>
         <h1>Route Around</h1>
         <div className="dark-mode-toggle">
-          <button type='button' onClick={this.toggleDarkMode}>Toggle Dark Mode</button>
+          <button type='button' onClick={this.handleToggleDarkMode}>Toggle Dark Mode</button>
+          <br />
+          <CopyToClipboard text={window.location.href}>
+            <button>Share Route! (atm copy url)</button>
+          </CopyToClipboard>
         </div>
         <br />
       <div>
