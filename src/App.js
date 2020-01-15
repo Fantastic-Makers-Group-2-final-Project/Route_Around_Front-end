@@ -199,7 +199,7 @@ export class MapContainer extends React.Component {
         <br />
       </form>
       <div id='map'>
-        <CurrentLocation yesIWantToUseGoogleMapApiInternals centerAroundCurrentLocation google={this.props.google}>
+        <Map yesIWantToUseGoogleMapApiInternals centerAroundCurrentLocation google={this.props.google}>
           <Marker onClick={this.onMarkerClick} name={'current location'} />
           <InfoWindow
             marker={this.state.activeMarker}
@@ -215,7 +215,7 @@ export class MapContainer extends React.Component {
                 position={this.state.currentLocation}
             />
           {this.displayMarkers()}
-        </CurrentLocation>
+        </Map>
       </div>
       </div>
       </div>
