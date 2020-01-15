@@ -10,6 +10,7 @@ export class MapContainer extends React.Component {
     super(props);
     const { lat, lng } = this.props.initialCenter
     this.state = {
+      darkMode: false,
       stores: [],
       showingInfoWindow: false,
       activeMarker: {},
@@ -26,6 +27,7 @@ export class MapContainer extends React.Component {
     this.handlePostcodeChange = this.handlePostcodeChange.bind(this);
     this.handleDistanceChange = this.handleDistanceChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.toggleDarkMode = this.toggleDarkMode.bind(this);
   }
 
   onMarkerClick = (props, marker, e) =>
@@ -89,6 +91,11 @@ export class MapContainer extends React.Component {
     this.setState({distance: event.target.value});
   }
 
+  toggleDarkMode(event) {
+    let darkMode = this.state.darkMode
+    this.setState({darkMode: !darkMode})
+  }
+
   handleSubmit(event) {
     event.preventDefault()
     this.getCoordinates(this.state.postCode)
@@ -138,11 +145,104 @@ export class MapContainer extends React.Component {
     var directionsService = new google.maps.DirectionsService();
     var directionsRenderer = new google.maps.DirectionsRenderer({suppressMarkers: true});
     var center = new google.maps.LatLng(this.state.currentLocation.lat, this.state.currentLocation.lng)
-    var mapOptions = {
+    var mapOptions1 = {
       center: center,
       zoom: 16
     }
-    var map = new google.maps.Map(document.getElementById('map'), mapOptions);
+    var mapOptions2 = {
+      center: center,
+      zoom: 16,
+      styles: [
+            {elementType: 'geometry', stylers: [{color: '#242f3e'}]},
+            {elementType: 'labels.text.stroke', stylers: [{color: '#242f3e'}]},
+            {elementType: 'labels.text.fill', stylers: [{color: '#746855'}]},
+            {
+              featureType: 'administrative.locality',
+              elementType: 'labels.text.fill',
+              stylers: [{color: '#d59563'}]
+            },
+            {
+              featureType: 'poi',
+              elementType: 'labels.text.fill',
+              stylers: [{color: '#d59563'}]
+            },
+            {
+              featureType: 'poi.park',
+              elementType: 'geometry',
+              stylers: [{color: '#263c3f'}]
+            },
+            {
+              featureType: 'poi.park',
+              elementType: 'labels.text.fill',
+              stylers: [{color: '#6b9a76'}]
+            },
+            {
+              featureType: 'road',
+              elementType: 'geometry',
+              stylers: [{color: '#38414e'}]
+            },
+            {
+              featureType: 'road',
+              elementType: 'geometry.stroke',
+              stylers: [{color: '#212a37'}]
+            },
+            {
+              featureType: 'road',
+              elementType: 'labels.text.fill',
+              stylers: [{color: '#9ca5b3'}]
+            },
+            {
+              featureType: 'road.highway',
+              elementType: 'geometry',
+              stylers: [{color: '#746855'}]
+            },
+            {
+              featureType: 'road.highway',
+              elementType: 'geometry.stroke',
+              stylers: [{color: '#1f2835'}]
+            },
+            {
+              featureType: 'road.highway',
+              elementType: 'labels.text.fill',
+              stylers: [{color: '#f3d19c'}]
+            },
+            {
+              featureType: 'transit',
+              elementType: 'geometry',
+              stylers: [{color: '#2f3948'}]
+            },
+            {
+              featureType: 'transit.station',
+              elementType: 'labels.text.fill',
+              stylers: [{color: '#d59563'}]
+            },
+            {
+              featureType: 'water',
+              elementType: 'geometry',
+              stylers: [{color: '#17263c'}]
+            },
+            {
+              featureType: 'water',
+              elementType: 'labels.text.fill',
+              stylers: [{color: '#515c6d'}]
+            },
+            {
+              featureType: 'water',
+              elementType: 'labels.text.stroke',
+              stylers: [{color: '#17263c'}]
+            }
+          ]
+    }
+
+
+    if (this.state.darkMode) {
+        document.body.classList.add('dark-mode');
+        var map = new google.maps.Map(document.getElementById('map'), mapOptions2);
+    } else {
+        document.body.classList.remove('dark-mode');
+        var map = new google.maps.Map(document.getElementById('map'), mapOptions1);
+    }
+
     var markerStart = new google.maps.Marker({position: this.state.stores[0]})
     var markerCurrent = new google.maps.Marker({position: this.state.currentLocation})
     markerStart.setMap(map);
@@ -171,6 +271,10 @@ export class MapContainer extends React.Component {
       <div className='App'>
       <div>
         <h1>Route Around</h1>
+        <div className="dark-mode-toggle">
+          <button type='button' onClick={this.toggleDarkMode}>Toggle Dark Mode</button>
+        </div>
+        <br />
       <div>
       <form className='App' onSubmit={this.handleSubmit}>
         <label>
@@ -195,7 +299,8 @@ export class MapContainer extends React.Component {
         </label>
         <br />
         <br />
-        <input type="submit" value="GO!" />
+        <input type="submit" value="Generate Route!" />
+        <br />
         <br />
       </form>
       <div id='map'>
