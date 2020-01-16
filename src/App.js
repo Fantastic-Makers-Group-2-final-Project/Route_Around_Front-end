@@ -70,7 +70,7 @@ export class MapContainer extends React.Component {
 
   computeTotalDistance = async (coordsData) => {
     var directionsService = new google.maps.DirectionsService();
-    var directionsRenderer = new google.maps.DirectionsRenderer({suppressMarkers: true, draggable: true, map: map, panel: document.getElementById('right-panel')});
+    var directionsRenderer = new google.maps.DirectionsRenderer({suppressMarkers: true, draggable: false, map: map, panel: document.getElementById('right-panel')});
     var center = new google.maps.LatLng(51.5178767, -0.0762007);
 
     var mapOptions = {
@@ -159,8 +159,7 @@ export class MapContainer extends React.Component {
 
   handleSubmit(event) {
     event.preventDefault()
-    if (this.state.postCode ==='') { alert('Ready for your ' + this.state.distance + 'km, based on your current co-ordinates of '
-    + this.state.currentLocation.lat + ', ' + this.state.currentLocation.lng)
+    if (this.state.postCode ==='') { alert('Generating route for ' + this.state.distance + 'km, based on your current location')
     var data = {
       'coordinates': this.state.currentLocation,
       'distance': this.state.distance
@@ -169,7 +168,7 @@ export class MapContainer extends React.Component {
   } else {
     this.getCoordinates(this.state.postCode)
     .then(result => {
-      alert('Ready for your ' + this.state.distance + 'km, your postcode is ' + this.state.postCode);
+      alert('Generating route for ' + this.state.distance + 'km');
       this.setState({postCodeCoords: result});
       var data = {
         'coordinates': this.state.postCodeCoords,
