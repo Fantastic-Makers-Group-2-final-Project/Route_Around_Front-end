@@ -340,72 +340,84 @@ export class MapContainer extends React.Component {
   render() {
     return (
       <div className='App'>
-      <div>
-        <h1>Route Around</h1>
-        <div className="dark-mode-toggle">
-          <button type='button' onClick={this.handleToggleDarkMode}>Toggle Dark Mode</button>
-          <br />
-          <CopyToClipboard text={window.location.href}>
-            <button>Share Route! (atm copy url)</button>
-          </CopyToClipboard>
-        </div>
-        <br />
-      <div>
-      <form className='App' onSubmit={this.handleSubmit}>
-        <label>
-          Start Location:
-          <input
-            name="postCode"
-            type="text"
-            value={this.state.postCode}
-            onChange={this.handlePostcodeChange} />
-          <br />  (PostCode - leave blank for current location.)
-        </label>
-        <br />
-        <br />
-        <label>
-          Distance:
-          <input
-            name="distance"
-            type="number"
-            value={this.state.distance}
-            onChange={this.handleDistanceChange} />
-            Kilometres
-        </label>
-        <br />
-        <br />
-
-        <div id="right-panel">
-            <label>
-              <p>Total Distance: <span id="total">{this.state.actualDistance}</span></p>
-            </label>
-        </div>
-        <br />
-        <input type="submit" value="GO!" />
-
-        <br />
-      </form>
-      <div id='map'>
-        <Map yesIWantToUseGoogleMapApiInternals centerAroundCurrentLocation google={this.props.google}>
-          <Marker onClick={this.onMarkerClick} name={'current location'} />
-          <InfoWindow
-            marker={this.state.activeMarker}
-            visible={this.state.showingInfoWindow}
-            onClose={this.onClose}
-          >
-            <div>
-              <h4>{this.state.selectedPlace.name}</h4>
+        <div className="nonMapApp">
+          <div className="container" id="banner"> 
+            <div className="row border-bottom">
+              <div className="col-10">
+                <h1>Route Around</h1>
+              </div>
+              <div className="col">
+                <button className="btn btn-light btn-sm" onClick={this.handleToggleDarkMode}><span className="oi oi-moon"></span></button>
+              </div>
             </div>
-          </InfoWindow>
-          <Marker
-                icon="https://www.robotwoods.com/dev/misc/bluecircle.png"
-                position={this.state.currentLocation}
-            />
-          {this.displayMarkers()}
-        </Map>
-      </div>
-      </div>
-      </div>
+          </div>
+          <form className='form' onSubmit={this.handleSubmit}>
+            <div className="form-group">
+              <div className="container">
+                <div className="row">
+                  <div className="col">
+                    Start location:
+                  </div>
+                  <div className="col-7"> 
+                    <input
+                      className="form-control"
+                      name="postCode"
+                      type="text"
+                      value={this.state.postCode}
+                      onChange={this.handlePostcodeChange}/>
+                    <small id="emailHelp" className="form-text text-muted">For current location, leave blank</small>
+                  </div>
+                </div>
+                <div className="row">
+                  <div className="col">
+                    Kilometers:
+                  </div>
+                  <div className="col-7">
+                    <input
+                      className="form-control"
+                      name="distance"
+                      type="number"
+                      value={this.state.distance}
+                      onChange={this.handleDistanceChange} />
+                  </div>
+                </div>
+                <br />
+                <div className="row" id="buttonRow">
+                  <button type="submit" className="btn btn-light btn-lg btn-block border" id="planRoute">Plan my route!</button>
+                </div>
+              </div>         
+            </div>
+          </form>
+        </div>
+
+        <div className="container border-bottom" id="map">
+          <div id='map'>
+            <Map yesIWantToUseGoogleMapApiInternals centerAroundCurrentLocation google={this.props.google}>
+              <Marker onClick={this.onMarkerClick} name={'current location'} />
+              <InfoWindow
+                marker={this.state.activeMarker}
+                visible={this.state.showingInfoWindow}
+                onClose={this.onClose}
+              >
+                <div>
+                  <h4>{this.state.selectedPlace.name}</h4>
+                </div>
+              </InfoWindow>
+              <Marker
+                    icon="https://www.robotwoods.com/dev/misc/bluecircle.png"
+                    position={this.state.currentLocation}
+                />
+              {this.displayMarkers()}
+            </Map>
+          </div>
+        </div>
+        <div className="container" id="totalDistance">
+          <div className="row">
+            Total Route Distance:
+            <div className="col">
+            <span id="total">{this.state.actualDistance}</span>          </div>
+          </div>
+        </div>
       </div>
     );
   }

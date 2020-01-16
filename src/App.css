@@ -1,10 +1,20 @@
-.App {
-  text-align: center;
+.nonMapApp {
+  text-align: left;
+  width: 100%;
+  padding-top: 0px;
 }
+
+.form {
+  text-align: left;
+  width: 100%;
+  padding-top: 8px;
+  border-color: #212a37
+}
+
 
 #map {
   width: 100%;
-  height: 75%;
+  height: 60%;
   position: absolute;
 }
 
@@ -14,34 +24,10 @@
   position: absolute;
 }
 
-.threeD {
-  color: darkgrey;
-  white-space: nowrap;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  font-size: 3em;
-  font-family: sans-serif;
-  letter-spacing: 0.1em;
-  transition: 0.3s;
-  text-shadow: 1px 1px 0 grey, 1px 2px 0 grey, 1px 3px 0 grey, 1px 4px 0 grey,
-    1px 5px 0 grey, 1px 6px 0 grey, 1px 7px 0 grey, 1px 8px 0 grey,
-    5px 13px 15px black;
-}
-
-.threeD:hover {
-  transition: 0.3s;
-  transform: scale(1.1)translate(-50%, -50%);
-  text-shadow: 1px -1px 0 grey, 1px -2px 0 grey, 1px -3px 0 grey,
-    1px -4px 0 grey, 1px -5px 0 grey, 1px -6px 0 grey, 1px -7px 0 grey,
-    1px -8px 0 grey, 5px -13px 15px black, 5px -13px 25px #808080;
-}
-
 body {
   /* #7B9FB7 alternative background color */
-  background-color: #deeaee;
-  color: #c94c4c;
+  background-color: rgb(252, 247, 233);
+  color: #212a37;
 }
 
 body.dark-mode {
@@ -49,44 +35,51 @@ body.dark-mode {
   color: #d59563;
 }
 
-.center {
-  display: block;
-  margin-left: auto;
-  margin-right: auto;
-  width: 50%;
+h1 {
+  font-size: 32px;
+  font-weight: bold;
+  text-align: left;
+  color: #d59563;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+.border-bottom {
+  border-color: #464646!important;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+.button {
+  background-color: #212a37;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+.form-group {
+  margin-bottom: 0px;
 }
 
-.App-link {
-  color: #61dafb;
+.container {
+  padding-bottom: 0!important;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+button#planRoute {
+  background-color: #d59563;
+  color: #212a37;
+}
+
+button#planRoute .dark-mode {
+  background-color: #d59563;
+  color: #212a37;
+}
+
+.container#banner {
+  padding-top: 0!important;
+  color: #d59563;
+  background-color: #212a37;
+}
+#buttonRow {
+  padding-bottom: 2px;
+}
+
+.container#totalDistance {
+  color: #d59563;
+  position: absolute;
+  bottom: 0;
+  padding-left: 20px;
 }
