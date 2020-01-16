@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { render } from '@testing-library/react';
-import renderer from 'react-test-renderer';
+// import renderer from 'react-test-renderer';
 import App from './App';
 
 describe('Addition TEST', () => {
@@ -18,10 +18,10 @@ describe('Intro tests', () => {
   });
 });
 
-describe('App', () => {
-  test('snapshot renders', () => {
-    const component = renderer.create(<App />);
-    let tree = component.toJSON();
-    expect(tree).toMatchSnapshot();
-  });
-});
+// describe('App', () => {
+//   test('snapshot renders', () => {
+//     const component = renderer.create(<App />);
+//     let tree = component.toJSON();
+//     expect(tree).toMatchSnapshot();
+//   });
+// });
