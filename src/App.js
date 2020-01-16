@@ -1,10 +1,8 @@
 /*global google*/
 import React from 'react';
-import logo from './logo.svg';
 import './App.css';
-import { Map, GoogleApiWrapper, Marker, InfoWindow, Polyline, DirectionsRenderer, GoogleMapReact } from 'google-maps-react';
+import { Map, GoogleApiWrapper, Marker, InfoWindow } from 'google-maps-react';
 import { CopyToClipboard } from 'react-copy-to-clipboard'
-import CurrentLocation from './CurrentLocation';
 
 export class MapContainer extends React.Component {
   constructor(props) {
@@ -109,6 +107,26 @@ export class MapContainer extends React.Component {
     return actualDistance
   };
 
+  getRoute  = (data) => {
+    fetch('https://routearound-back.herokuapp.com/generate-waypoint-coordinates', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data)
+    })
+    .then((response) => {
+      return response.json();
+    }).then(async (coordsData) => {
+      let actualDistance = await this.computeTotalDistance(coordsData);
+      return { stores: coordsData, actualDistance: actualDistance }
+    })
+    .then((data) => {
+      this.setState({stores: data.stores, actualDistance: data.actualDistance})
+    })
+
+  }
+
   setCurrentLocation = async () => {
     if (this.props.centerAroundCurrentLocation) {
       if (navigator && navigator.geolocation) {
@@ -146,22 +164,7 @@ export class MapContainer extends React.Component {
       'coordinates': this.state.currentLocation,
       'distance': this.state.distance
     }
-    fetch('https://routearound-back.herokuapp.com/generate-waypoint-coordinates', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(data)
-    })
-    .then((response) => {
-      return response.json();
-    }).then(async (coordsData) => {
-      let actualDistance = await this.computeTotalDistance(coordsData);
-      return { stores: coordsData, actualDistance: actualDistance }
-    })
-    .then((data) => {
-      this.setState({stores: data.stores, actualDistance: data.actualDistance})
-    })
+    this.getRoute(data)
   } else {
     this.getCoordinates(this.state.postCode)
     .then(result => {
@@ -171,34 +174,18 @@ export class MapContainer extends React.Component {
         'coordinates': this.state.postCodeCoords,
         'distance': this.state.distance
       }
-      fetch('https://routearound-back.herokuapp.com/generate-waypoint-coordinates', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data)
-      })
-      .then((response) => {
-        return response.json();
-      }).then(async (coordsData) => {
-        let actualDistance = await this.computeTotalDistance(coordsData);
-        return { stores: coordsData, actualDistance: actualDistance }
-      })
-      .then((data) => {
-        this.setState({stores: data.stores, actualDistance: data.actualDistance})
-      })
+      this.getRoute(data);
     })
     .catch(error => {
       alert('Ooops! Something went wrong! Please check your START LOCATION and DISTANCE and try again')
     })
-
   }
-  };
+};
+
 
   componentDidMount() {
     this.setCurrentLocation();
 
-    var directionsService = new google.maps.DirectionsService();
     var directionsRenderer = new google.maps.DirectionsRenderer();
     var center = new google.maps.LatLng(this.state.currentLocation.lat, this.state.currentLocation.lng)
     var mapOptions = {
