@@ -25,7 +25,6 @@
 }
 
 body {
-  /* #7B9FB7 alternative background color */
   background-color: rgb(252, 247, 233);
   color: #212a37;
 }
@@ -83,3 +82,4 @@ button#planRoute .dark-mode {
   bottom: 0;
   padding-left: 20px;
 }
+
