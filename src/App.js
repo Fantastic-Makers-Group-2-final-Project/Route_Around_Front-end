@@ -370,7 +370,7 @@ export class MapContainer extends React.Component {
                 </div>
                 <div className="row">
                   <div className="col">
-                    Kilometers:
+                    Kilometres:
                   </div>
                   <div className="col-7">
                     <input
