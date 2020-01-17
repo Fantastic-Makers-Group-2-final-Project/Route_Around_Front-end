@@ -376,7 +376,7 @@ export class MapContainer extends React.Component {
           </form>
         </div>
 
-        <div className="container border-bottom" id="map">
+        <div className="container-fluid border-bottom" id="map">
           <div id='map'>
             <Map yesIWantToUseGoogleMapApiInternals centerAroundCurrentLocation google={this.props.google}>
               <Marker onClick={this.onMarkerClick} name={'current location'} />
