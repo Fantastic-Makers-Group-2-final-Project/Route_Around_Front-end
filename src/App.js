@@ -327,7 +327,7 @@ export class MapContainer extends React.Component {
     return (
       <div className='App'>
         <div className="nonMapApp">
-          <div className="container" id="banner"> 
+          <div className="container" id="banner">
             <div className="row border-bottom">
               <div className="col-10">
                 <h1>Route Around</h1>
@@ -344,7 +344,7 @@ export class MapContainer extends React.Component {
                   <div className="col">
                     Start location:
                   </div>
-                  <div className="col-7"> 
+                  <div className="col-7">
                     <input
                       className="form-control"
                       name="postCode"
@@ -356,7 +356,7 @@ export class MapContainer extends React.Component {
                 </div>
                 <div className="row">
                   <div className="col">
-                    Kilometers:
+                    Kilometres:
                   </div>
                   <div className="col-7">
                     <input
@@ -371,7 +371,7 @@ export class MapContainer extends React.Component {
                 <div className="row" id="buttonRow">
                   <button type="submit" className="btn btn-light btn-lg btn-block border" id="planRoute">Plan my route!</button>
                 </div>
-              </div>         
+              </div>
             </div>
           </form>
         </div>
@@ -401,7 +401,7 @@ export class MapContainer extends React.Component {
           <div className="row">
             Total Route Distance:
             <div className="col">
-            <span id="total">{this.state.actualDistance}</span>          </div>
+            <span id="total">{this.state.actualDistance}</span> km</div>
           </div>
         </div>
       </div>
